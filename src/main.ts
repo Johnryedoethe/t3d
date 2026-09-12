@@ -1,22 +1,17 @@
-import { invoke } from "@tauri-apps/api/core";
+function main() {
+  const canvas = document.getElementById("2d_canvas") as HTMLCanvasElement;
 
-let greetInputEl: HTMLInputElement | null;
-let greetMsgEl: HTMLElement | null;
+  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-async function greet() {
-  if (greetMsgEl && greetInputEl) {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    greetMsgEl.textContent = await invoke("greet", {
-      name: greetInputEl.value,
-    });
-  }
+  ctx.beginPath();
+
+  ctx.moveTo(50, 50);
+  ctx.lineTo(200, 150);
+
+  ctx.lineWidth = 5;          
+  ctx.strokeStyle = '#007acc'; 
+
+  ctx.stroke();
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
-  greetMsgEl = document.querySelector("#greet-msg");
-  document.querySelector("#greet-form")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    greet();
-  });
-});
+window.addEventListener("DOMContentLoaded", main);

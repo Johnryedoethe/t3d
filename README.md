@@ -1,4 +1,4 @@
-# T3d
+# T3D
 
 This app has been set up with Tauri + Vanilla TS.
 
