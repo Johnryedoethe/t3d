@@ -1,7 +1,29 @@
-# Tauri + Vanilla TS
+# T3d
 
-This template should help get you started developing with Tauri in vanilla HTML, CSS and Typescript.
+This app has been set up with Tauri + Vanilla TS.
 
-## Recommended IDE Setup
+To install dependencies:
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+```sh
+npm install
+```
+
+To install dependencies for Android and iOS app:
+
+```sh
+npm run tauri android init
+npm run tauri ios init
+```
+
+To start desktop app in development mode:
+
+```sh
+npm run tauri dev
+```
+
+To start desktop app in development mode:
+
+```sh
+npm run tauri android dev
+npm run tauri ios dev
+```
