@@ -31,20 +31,40 @@ const cube3D: Object3D = {
   ],
 };
 
-function project3DTo2D(obj3D: Object3D): Object2D {
-  const points3D = obj3D.points
+let savedObject3D: Object3D
 
-  // const points2D: Point2D[] = []
+const focal: number = 200
 
-  // for (let i = 0; i < points3D.length; i++) {
-  //   points2D.push({x: points3D[i].x, y: points3D[i].y})
-  // }
+function project3DTo2D(obj3D: Object3D, shiftWidth: number, shiftHeight: number): Object2D {
+  const points3D: Point3D[] = obj3D.points
+  const newPoints3D: Point3D[] = []
+
+  for (let i = 0; i < points3D.length; i++) {
+    if (points3D[i].z === 0) {
+      newPoints3D.push({x: points3D[i].x + shiftWidth, y: points3D[i].y + shiftHeight, z: points3D[i].z})
+      continue
+    }
+
+    const perspectivefactor: number = (focal + 1)/points3D[i].z - 1
+
+    console.log(perspectivefactor)
+
+    const x: number = points3D[i].x * perspectivefactor + shiftWidth 
+    const y: number = points3D[i].y * perspectivefactor + shiftHeight
+
+    newPoints3D.push({x, y, z: points3D[i].z})
+  }
 
   // const points2D: Point2D[] = points3D.map(p => ({x: p.x, y: p.y}))
-  const points2D: Point2D[] = points3D.map(({x, y}) => ({x, y}))
+  const points2D: Point2D[] = newPoints3D.map(({x, y}) => ({x, y}))
 
   const obj2D = {
     points: points2D,
+    edges: obj3D.edges
+  }
+
+  savedObject3D = {
+    points: newPoints3D,
     edges: obj3D.edges
   }
 
@@ -81,13 +101,13 @@ function main() {
   const canvas = document.getElementById("2d_canvas") as HTMLCanvasElement;
 
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  // ctx.translate(canvas.width / 2, canvas.height / 2)
 
-  const cube2D = project3DTo2D(cube3D)
+  const cube2D = project3DTo2D(cube3D, canvas.width / 2, canvas.height / 2)
 
   drawObject2D(ctx, cube2D)
 
-
-  drawLineSegment(ctx, {x: 0, y: 0}, {x: 200, y: 400});
+  // drawLineSegment(ctx, {x: 0, y: 0}, {x: 200, y: 400});
 }
 
 window.addEventListener("DOMContentLoaded", main);
