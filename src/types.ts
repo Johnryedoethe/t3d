@@ -23,3 +23,11 @@ export interface Object2D {
   points: Point2D[];
   edges: Edge[];
 }
+
+interface NamedObject3D {
+  [key: string]: Object3D
+}
+
+export interface Scene3D {
+  Objects: NamedObject3D[]
+}
