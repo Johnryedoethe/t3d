@@ -14,9 +14,15 @@ export interface Edge {
   pointIdx2: number;
 }
 
-export interface Object3D {
+export interface Shape3D {
   points: Point3D[];
   edges: Edge[];
+}
+
+export interface Object3D {
+  shape: Shape3D;
+  dPoints: Point3D[];
+  midpoint: Point3D;
 }
 
 export interface Object2D {
@@ -24,10 +30,6 @@ export interface Object2D {
   edges: Edge[];
 }
 
-interface NamedObject3D {
-  [key: string]: Object3D
-}
-
 export interface Scene3D {
-  Objects: NamedObject3D[]
+  Objects: Object3D[];
 }

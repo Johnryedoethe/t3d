@@ -1,7 +1,7 @@
-import { Point2D, Point3D, Object3D } from "./types";
-import { convertObject3DToDeltaPoints } from "./util"
+import { Object3D, Point2D, Point3D, Shape3D } from "./types";
+import { originalShape3DToDeltaPoints, combineDPointsAndPointsIntoShape3D } from "./util"
 
-export function RotateObject3D(obj3D: Object3D, Theta: number, axis: string): Object3D {
+export function rotateObject3D(obj3D: Object3D, Theta: number, axis: string, pivot: Point3D): Object3D {
   // currently assume the user is not doing anything and in the preview automatically will an object rotate
 
   // assume the current state is that they are holding the object and rotating.
@@ -13,31 +13,28 @@ export function RotateObject3D(obj3D: Object3D, Theta: number, axis: string): Ob
     return obj3D
   }
 
-  let midpointOfRotation: Point3D = {x: 0, y: 0, z: 0}
-  const points: Point3D[] = obj3D.points
+  const combinedShape3D: Shape3D = combineDPointsAndPointsIntoShape3D(obj3D)
 
-  for (let i = 0; i < points.length; i++) {
-    midpointOfRotation.x += points[i].x
-    midpointOfRotation.y += points[i].y
-    midpointOfRotation.z += points[i].z
+  // midpoint will be given in function arg later
+
+  const rotatedVal: Point3D[] = rotateOnAnAxis(combinedShape3D, Theta, axis, pivot)
+  const dPoints: Point3D[] = originalShape3DToDeltaPoints(obj3D.shape, rotatedVal)
+
+  const newShape: Shape3D = {
+    points: obj3D.shape.points,
+    edges: obj3D.shape.edges
   }
-
-  midpointOfRotation.x = midpointOfRotation.x / points.length
-  midpointOfRotation.y = midpointOfRotation.y / points.length
-  midpointOfRotation.z = midpointOfRotation.z / points.length
-
-  const rotatedVal: Point3D[] = rotateOnAxis(obj3D, Theta, axis, midpointOfRotation)
-  const dPoints: Point3D[] = convertObject3DToDeltaPoints(obj3D, rotatedVal)
-
-  // return ∆Points3D[]
 
   return {
-    points: dPoints,
-    edges: obj3D.edges
+    shape: newShape,
+    dPoints: dPoints,
+    midpoint: pivot
   }
+
+
 } 
 
-function rotateOnAxis(obj3D: Object3D, Theta: number, axis: string, pivot: Point3D): Point3D[] {
+function rotateOnAnAxis(obj3D: Shape3D, Theta: number, axis: string, pivot: Point3D): Point3D[] {
   const points3d: Point3D[] = obj3D.points
 
   const rTheta: number = Theta * (Math.PI / 180)
@@ -115,9 +112,8 @@ function rotateOnZAxis(pivot: Point3D, rTheta: number, Points: Point3D[]): Point
 function calculateRotation(x: number, y: number, center: Point2D, rTheta: number): Point2D {
   // run math here
 
-  // math is simplified to 2 dimensions of x and y as a general way to calculate
+  // math is simplified to 2 dimensions of x and y as a generalised way to calculate
   // z is always on x or horizontal axis unless you are rotating on z axis 
-
 
   const rotx: number = ( (y - center.y) * Math.sin(rTheta) ) + ( (x - center.x) * Math.cos(rTheta) )
   const roty: number = ( (y - center.y) * Math.cos(rTheta) ) - ( (x - center.x) * Math.sin(rTheta) )
