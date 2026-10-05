@@ -1,13 +1,13 @@
 import { Point2D, Point3D, Shape3D, Object2D, Scene3D } from "./types";
-import { combineDPointsAndPointsIntoShape3D } from "./util"
-
+import { rotateObject3D } from "./transformImplementations/rotations"
 
 export function renderScene3D(ctx: CanvasRenderingContext2D, scene3D: Scene3D, eye: Point3D) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
 
-  for (let i = 0; i < scene3D.Objects.length; i++) {
-    const curShape = combineDPointsAndPointsIntoShape3D(scene3D.Objects[i])
+  for (let i = 0; i < scene3D.objects.length; i++) {
+    const curShape = rotateObject3D(scene3D.objects[i])
+
 
     const curShape2D = project3DTo2D(curShape, eye)
     drawObject2D(ctx, curShape2D)

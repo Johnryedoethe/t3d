@@ -21,8 +21,9 @@ export interface Shape3D {
 
 export interface Object3D {
   shape: Shape3D;
-  dPoints: Point3D[];
-  midpoint: Point3D;
+  midpoint: Point3D;  // cache the original points
+  translation: Point3D;
+  rotation: Point3D;  // rotation around the midpoint in radians
 }
 
 export interface Object2D {
@@ -31,5 +32,5 @@ export interface Object2D {
 }
 
 export interface Scene3D {
-  Objects: Object3D[];
+  objects: Object3D[]; // edit the properties of Object3D which will be rendered
 }
