@@ -1,23 +1,15 @@
 import { Scene3D, Object3D, Point3D } from "./types";
 import { renderScene3D } from "./render"
-import { findMidpoint } from "./util"
 
 // import { rotateObject3D } from "./transformImplementations/rotations"
 
 import { cube3D } from "./meshes"
 
 
-const savedObject3D: Object3D = {
-  shape: cube3D,
-  translation: {x: 0, y: 0, z: 0},
-  rotation: {x: 0, y: 0, z: 0},
-  midpoint: findMidpoint(cube3D)
-}
-
 // default scene will include only a cube
 // user can override with their own existing scene with Objects
 const scene3D: Scene3D = { 
-  objects: [savedObject3D]
+  objects: [{...cube3D}, {...cube3D}]
 }
 
 
@@ -46,14 +38,14 @@ function main() {
     scene3D.objects[0].rotation = {x: rot.x ,y: rotY, z: rot.z}
 
     const translate = scene3D.objects[0].translation
-    scene3D.objects[0].translation = {x: 500 ,y: 50, z: translate.z}
+    scene3D.objects[0].translation = {x: canvas.width / 2 ,y: canvas.height / 2 - 50, z: translate.z}
 
 
     renderScene3D(ctx, scene3D, eye)
-
+    console.log(scene3D.objects[0].midpoint)
   }
 
-  setInterval(gameLoop, 100)
+  setInterval(gameLoop, 30)
 }
 
 window.addEventListener("DOMContentLoaded", main);

@@ -1,8 +1,8 @@
-// temporary
+import { Shape3D, Object3D } from "./types"
+import { findMidpoint } from "./util" 
 
-import { Shape3D } from "./types"
 
-export const cube3D: Shape3D = {
+const cube3DMesh: Shape3D = {
   points: [
     {x: 0, y: 0, z: 0},
     {x: 0, y: 100, z: 0},
@@ -31,4 +31,10 @@ export const cube3D: Shape3D = {
     {pointIdx1: 2, pointIdx2: 6},
     {pointIdx1: 3, pointIdx2: 7},
   ],
-};
+}
+export const cube3D: Object3D = {
+  shape: cube3DMesh,
+  translation: {x: 0, y: 0, z: 0},
+  rotation: {x: 0, y: 0, z: 0},
+  midpoint: findMidpoint(cube3DMesh)
+}

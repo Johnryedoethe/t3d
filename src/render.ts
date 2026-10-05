@@ -1,25 +1,30 @@
-import { Point2D, Point3D, Shape3D, Object2D, Scene3D } from "./types";
+import { Point2D, Point3D, Shape3D, Shape2D, Scene3D, Object3D } from "./types";
 import { transformShape } from "./transformations";
 
 export function renderScene3D(ctx: CanvasRenderingContext2D, scene3D: Scene3D, eye: Point3D) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+  const newScene2d: Shape2D[] = []
 
   for (let i = 0; i < scene3D.objects.length; i++) {
     const curShape = transformShape(scene3D.objects[i])
 
     const curShape2D = project3DTo2D(curShape, eye)
-    drawObject2D(ctx, curShape2D)
+    newScene2d.push(curShape2D)
   }
+
+  // console.log(transformShape(scene3D.objects[1]).points)
+
+  drawObject2D(ctx, newScene2d)
 }
 
 
-function project3DTo2D(shape: Shape3D, eye: Point3D): Object2D {
-  // assumed that values have already shifted and the value has to be calculated 
+function project3DTo2D(shape: Shape3D, eye: Point3D): Shape2D {
+  // assume that values have already shifted and the value has to be calculated 
   const points3D: Point3D[] = shape.points
   const projectedPoints2D: Point2D[] = calculateProjection(points3D, eye)
  
-  const obj2D: Object2D = {
+  const obj2D: Shape2D = {
     points: projectedPoints2D,
     edges: shape.edges
   }
@@ -27,17 +32,20 @@ function project3DTo2D(shape: Shape3D, eye: Point3D): Object2D {
   return obj2D;
 }
 
-function drawObject2D(ctx: CanvasRenderingContext2D, obj2D: Object2D) {
-  for (let i = 0; i < obj2D.edges.length; i++) {
-    const edge = obj2D.edges[i]
+function drawObject2D(ctx: CanvasRenderingContext2D, obj2D: Shape2D[]) {
+  for (let j = 0; j < obj2D.length; j++) {
+    for (let i = 0; i < obj2D[j].edges.length; i++) {
+      const edge = obj2D[j].edges[i]
 
-    const p1Idx = edge.pointIdx1
-    const p2Idx = edge.pointIdx2
+      const p1Idx = edge.pointIdx1
+      const p2Idx = edge.pointIdx2
 
-    const p1 = obj2D.points[p1Idx]
-    const p2 = obj2D.points[p2Idx]
-    drawLineSegment(ctx, p1, p2)
+      const p1 = obj2D[j].points[p1Idx]
+      const p2 = obj2D[j].points[p2Idx]
+      drawLineSegment(ctx, p1, p2)
+    }
   }
+  
 }
 
 function calculateProjection(points3D: Point3D[], eye: Point3D): Point2D[] {
@@ -56,7 +64,6 @@ function calculateProjection(points3D: Point3D[], eye: Point3D): Point2D[] {
     const y2: number = eye.y
     const z2: number = eye.z
   
-
     const m1: number = (y2 - y1) / (z2 - z1)
     const m2: number = (x2 - x1) / (z2 - z1)
     // y = mz + c

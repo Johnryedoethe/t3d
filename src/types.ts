@@ -26,7 +26,7 @@ export interface Object3D {
   rotation: Point3D;  // rotation around the midpoint in radians
 }
 
-export interface Object2D {
+export interface Shape2D {
   points: Point2D[];
   edges: Edge[];
 }
