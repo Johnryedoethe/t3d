@@ -29,6 +29,10 @@ function rotate3D(point: Point3D, origin: Point3D, rotation: Point3D): Point3D {
 }
 
 function rotate2D(point: Point2D, center: Point2D, rot: number): Point2D {
+  if (rot === 0 || rot === 360) {
+    return {x: point.x, y: point.y}
+  }
+
   const rotx: number = ( (point.y - center.y) * Math.sin(rot) ) + ( (point.x - center.x) * Math.cos(rot) )
   const roty: number = ( (point.y - center.y) * Math.cos(rot) ) - ( (point.x - center.x) * Math.sin(rot) )
 
