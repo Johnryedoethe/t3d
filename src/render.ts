@@ -1,4 +1,4 @@
-import { Point2D, Point3D, Shape3D, Shape2D, Scene3D, Object3D } from "./types";
+import { Point2D, Point3D, Shape3D, Shape2D, Scene3D } from "./types";
 import { transformShape } from "./transformations";
 
 export function renderScene3D(ctx: CanvasRenderingContext2D, scene3D: Scene3D, eye: Point3D) {

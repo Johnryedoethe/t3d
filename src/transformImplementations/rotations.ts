@@ -33,8 +33,8 @@ function rotate3D(point: Point3D, origin: Point3D, rotation: Point3D): Point3D {
 function rotate2D(point: Point2D, center: Point2D, rot: number): Point2D {
   const Rrot = rot * (Math.PI) / 180
 
-  const rotx: number = ( (point.y - center.y) * Math.sin(Rrot) ) + ( (point.x - center.x) * Math.cos(Rrot) )
-  const roty: number = ( (point.y - center.y) * Math.cos(Rrot) ) - ( (point.x - center.x) * Math.sin(Rrot) )
+  const rotx: number = ( (point.y - center.y) * Math.sin(Rrot) ) + ( (point.x - center.x) * Math.cos(Rrot) ) + center.x
+  const roty: number = ( (point.y - center.y) * Math.cos(Rrot) ) - ( (point.x - center.x) * Math.sin(Rrot) ) + center.y
 
   const fixedX: number = Number(rotx.toFixed(1))
   const fixedY: number = Number(roty.toFixed(1))

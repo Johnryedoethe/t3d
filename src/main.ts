@@ -1,4 +1,4 @@
-import { Scene3D, Object3D, Point3D } from "./types";
+import { Scene3D, Point3D } from "./types";
 import { renderScene3D } from "./render"
 
 // import { rotateObject3D } from "./transformImplementations/rotations"
