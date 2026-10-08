@@ -4,18 +4,16 @@ import { transformShape } from "./transformations";
 export function renderScene3D(ctx: CanvasRenderingContext2D, scene3D: Scene3D, eye: Point3D) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  const newScene2d: Shape2D[] = []
 
   for (let i = 0; i < scene3D.objects.length; i++) {
     const curShape = transformShape(scene3D.objects[i])
 
     const curShape2D = project3DTo2D(curShape, eye)
-    newScene2d.push(curShape2D)
+    drawObject2D(ctx, curShape2D)
   }
 
   // console.log(transformShape(scene3D.objects[1]).points)
 
-  drawObject2D(ctx, newScene2d)
 }
 
 
@@ -32,20 +30,17 @@ function project3DTo2D(shape: Shape3D, eye: Point3D): Shape2D {
   return obj2D;
 }
 
-function drawObject2D(ctx: CanvasRenderingContext2D, obj2D: Shape2D[]) {
-  for (let j = 0; j < obj2D.length; j++) {
-    for (let i = 0; i < obj2D[j].edges.length; i++) {
-      const edge = obj2D[j].edges[i]
+function drawObject2D(ctx: CanvasRenderingContext2D, obj2D: Shape2D) {
+  for (let i = 0; i < obj2D.edges.length; i++) {
+    const edge = obj2D.edges[i]
 
-      const p1Idx = edge.pointIdx1
-      const p2Idx = edge.pointIdx2
+    const p1Idx = edge.pointIdx1
+    const p2Idx = edge.pointIdx2
 
-      const p1 = obj2D[j].points[p1Idx]
-      const p2 = obj2D[j].points[p2Idx]
-      drawLineSegment(ctx, p1, p2)
-    }
-  }
-  
+    const p1 = obj2D.points[p1Idx]
+    const p2 = obj2D.points[p2Idx]
+    drawLineSegment(ctx, p1, p2)
+  }  
 }
 
 function calculateProjection(points3D: Point3D[], eye: Point3D): Point2D[] {
