@@ -1,4 +1,4 @@
-import { Shape3D, Object3D } from "./types"
+import { Shape3D, Object3D, Camera } from "./types"
 import { findMidpoint } from "./util" 
 
 
@@ -32,9 +32,19 @@ const cube3DMesh: Shape3D = {
     {pointIdx1: 3, pointIdx2: 7},
   ],
 }
+
 export const cube3D: Object3D = {
+  name: "cube",
   shape: cube3DMesh,
   translation: {x: 0, y: 0, z: 0},
   rotation: {x: 0, y: 0, z: 0},
   midpoint: findMidpoint(cube3DMesh)
+}
+
+export const camera: Camera = {
+  point: {x: 0, y: 0, z: -500},
+  camWidth: 800,
+  camHeight: 550,
+  translation: {x: 0, y: 0, z: 0},
+  rotation: {x: 0, y: 0, z: 0}
 }

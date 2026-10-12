@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "t3d",
+        "title": "Teapot3d",
         "width": 800,
         "height": 600
       }

@@ -3,11 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>T3D</title>
+    <title>Teapot3D</title>
     <script type="module" src="/src/main.ts" defer></script>
+    <link rel="stylesheet" href="./style.css">
   </head>
 
   <body>
-    <canvas id="2d_canvas" width="800" height="600" />
+    <div id="mainProject">
+      <div>
+        <canvas id="2d_canvas" width="800" height="600"></canvas>
+      </div>
+      <div id="objListContainer">
+        <ul id="objList"><h2>Scene:</h2></ul>
+      </div>
+    </div>
   </body>
 </html>

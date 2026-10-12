@@ -1,15 +1,22 @@
-import { Object3D, Shape3D } from "./types"
+import { Scene3D, Shape3D } from "./types"
 
 import { rotateObject3D } from "./transformImplementations/rotations"
 import { translateObject3D } from "./transformImplementations/translations"
 
-export function transformShape(obj3d: Object3D): Shape3D {
-  // duplicate the obj3d to point to different memory
-  const curObj3d = {...obj3d}
+export function transformScene(scene: Scene3D): Shape3D[] {
+  const newShapes: Shape3D[] = []
+
+  // duplicate objects
+  for (let i = 0; i < scene.objects.length; i++) {
+    let objCopy = {...scene.objects[i]}
+    objCopy.shape = rotateObject3D(objCopy)
+    objCopy.shape = translateObject3D(objCopy)
+
+    newShapes.push(objCopy.shape)
+  }
 
   // scale shape later implement
-  curObj3d.shape = rotateObject3D(curObj3d)
-  curObj3d.shape = translateObject3D(curObj3d)
+  
 
-  return curObj3d.shape
+  return newShapes
 }

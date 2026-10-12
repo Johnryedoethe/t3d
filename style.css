@@ -1,0 +1,21 @@
+body, h1, h2, h3, h4, p, ul, ol {
+  margin: 0;
+  padding: 0;
+}
+
+#mainProject {
+  background-color:rgb(195, 195, 48);
+  height: 100vh;
+  width: 100vw;
+}
+
+#objListContainer {
+  background-color: rgb(28, 105, 172);
+  width: 30%;
+}
+
+#2d_canvas {
+  width: 70vw;
+  height: 90vh;
+  background-color: gray;
+}
