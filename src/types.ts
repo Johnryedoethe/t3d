@@ -47,6 +47,6 @@ export interface Scene3D {
 
 export interface Editor3D {
   selectedObjs: Object3D[];
-  curEditorState: string;
-  curAxis: string | null;
+  curEditorState: "idle" | "grab" | "rotate";
+  curAxis: "x" | "y" | "z" | null;
 }

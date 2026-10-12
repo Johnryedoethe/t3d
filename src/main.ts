@@ -1,4 +1,4 @@
-import { Scene3D, Editor3D } from "./types";
+import { Scene3D, Editor3D, Point2D } from "./types";
 import { renderScene3D } from "./render"
 
 import { cube3D, camera } from "./initInterfaceValues"
@@ -56,34 +56,98 @@ function main() {
   let xcord = 0
   let left = false
 
-  let rotate = false
-  let translate = false
-  let xAxis = false
-  let yAxis = false
-  let zAxis = false
 
+  let trackMousePosition = false
+  let firstMouseMovement = false
+  let originalPos: Point2D = {x: 0, y: 0}
+
+  document.addEventListener('mousemove', (event) => {
+    if (!trackMousePosition) {
+      return
+    }
+
+    if (firstMouseMovement) {
+      firstMouseMovement = false
+      originalPos = {x: event.clientX, y: event.clientY}
+    }
+
+    if (editor3D.curEditorState === "grab") {
+      for (let i = 0; i < editor3D.selectedObjs.length; i++) {
+        // receive the pointer
+        const translate = editor3D.selectedObjs[i].translation
+
+        // translate.x = translate.x + event.clientX / 10
+        // translate.y = translate.y + event.clientY / 10
+        // translate.z = translate.y + event.clientY / 10
+
+        // translate[editor3D.curAxis] 
+      }
+
+  
+    }
+
+  }) 
 
   document.addEventListener('keypress', (event) => {
+    if (editor3D.selectedObjs.length === 0) {
+      return
+    }
+
+    let editorContent = document.getElementById("editorInfo")?.textContent
+
     if (event.key === 'Escape') {
-      scene3D.curEditorState = "idle"
+      editor3D.curEditorState = "idle"
+      trackMousePosition = false
       return
     }
 
     if (event.key === 'r') {
-      scene3D.curEditorState = "rotate"
+      editor3D.curEditorState = "rotate"
+      editor3D.curAxis = null
+      trackMousePosition = false
       return
     }
 
     if (event.key === 'g') {
-      scene3D.curEditorState = "grab"
+      editor3D.curEditorState = "grab"
+      editor3D.curAxis = null
+      trackMousePosition = false
+      console.log("grab")
       return
     }
 
-    if (scene3D.curEditorState === "idle") {
+    if (editor3D.curEditorState === "idle") {
+      editor3D.curAxis = null
+      trackMousePosition = false
+      editor3D.curAxis = null
       return
     }
 
-    if (scene3D.curEditorState === "grab" || scene3D.curEditorState === "rotate")
+    if (event.key === 'x') {
+      editor3D.curAxis = "x"
+      trackMousePosition = true
+      firstMouseMovement = true
+      return
+    }
+
+    if (event.key === 'y') {
+      editor3D.curAxis = "y"
+      trackMousePosition = true
+      firstMouseMovement = true
+      return
+    }
+
+    if (event.key === 'z') {
+      editor3D.curAxis = "x"
+      trackMousePosition = true
+      firstMouseMovement = true
+      return
+    }
+
+    if (!editor3D.curAxis) {
+      editorContent = "please select an axis of transformation"
+      return
+    }   
   })
   
 
