@@ -3,7 +3,7 @@ import { Scene3D, Shape3D } from "./types"
 import { rotateObject3D } from "./transformImplementations/rotations"
 import { translateObject3D } from "./transformImplementations/translations"
 
-export function transformScene(scene: Scene3D): Shape3D[] {
+export function transformScene3D(scene: Scene3D): Shape3D[] {
   const newShapes: Shape3D[] = []
 
   // duplicate objects

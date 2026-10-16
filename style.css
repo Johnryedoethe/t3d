@@ -5,8 +5,8 @@ body, h1, h2, h3, h4, p, ul, ol {
 
 #mainProject {
   background-color:rgb(195, 195, 48);
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
 }
 
 #objListContainer {

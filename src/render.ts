@@ -1,13 +1,14 @@
 import { Point2D, Point3D, Shape3D, Shape2D, Scene3D, Camera } from "./types";
-import { transformScene } from "./transformations";
+import { transformScene3D } from "./transformations";
 
 
   // fix edge case of depth bug
+  // fixed
 
 export function renderScene3D(ctx: CanvasRenderingContext2D, scene3D: Scene3D) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  const newShapes: Shape3D[] = transformScene(scene3D)
+  const newShapes: Shape3D[] = transformScene3D(scene3D)
 
   for (let i = 0; i < newShapes.length; i++) {
     const curShape2D = project3DTo2D(newShapes[i], scene3D.eye)
@@ -28,7 +29,7 @@ function project3DTo2D(shape: Shape3D, eye: Camera): Shape2D {
   return obj2D;
 }
 
-function drawObject2D(ctx: CanvasRenderingContext2D, shape2d: Shape2D, shape3d: Shape3D ,eye: Camera) {
+function drawObject2D(ctx: CanvasRenderingContext2D, shape2d: Shape2D, shape3d: Shape3D , eye: Camera) {
 
   for (let i = 0; i < shape2d.edges.length; i++) {
     const edge = shape2d.edges[i]
@@ -43,11 +44,11 @@ function drawObject2D(ctx: CanvasRenderingContext2D, shape2d: Shape2D, shape3d: 
     const p2z = shape3d.points[p2Idx].z
 
 
-    if (pointIsNotInView(eye, p1) && pointIsNotInView(eye, p2) || p1z <= eye.point.z && p2z <= eye.point.z) {
+    if (pointIsNotInView(eye, p1) && pointIsNotInView(eye, p2) || p1z <= -480 && p2z <= -480) {
       continue
     }
 
-    drawLineSegment(ctx, p1, p2)
+    drawLineUnselectedSegment(ctx, p1, p2)
   }  
 }
 
@@ -86,7 +87,7 @@ function calculateProjection(points3D: Point3D[], eye: Camera): Point2D[] {
   return projectedPoints2D
 }
 
-function drawLineSegment(ctx: CanvasRenderingContext2D, p1: Point2D, p2: Point2D) {
+function drawLineUnselectedSegment(ctx: CanvasRenderingContext2D, p1: Point2D, p2: Point2D) {
   ctx.beginPath();
 
   ctx.moveTo(p1.x, p1.y);
