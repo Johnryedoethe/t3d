@@ -1,9 +1,25 @@
 import { Point2D, Point3D, Shape3D, Shape2D, Scene3D, Camera } from "./types";
-import { transformScene3D } from "./transformations";
+
+import { rotateObject3D } from "./transformImplementations/rotations"
+import { translateObject3D } from "./transformImplementations/translations"
+import { scaleObject3D } from "./transformImplementations/scale"
+
+function transformScene3D(scene: Scene3D): Shape3D[] {
+  const newShapes: Shape3D[] = []
+
+  // duplicate objects
+  for (let i = 0; i < scene.objects.length; i++) {
+    let objCopy = {...scene.objects[i]}
+    objCopy.shape = scaleObject3D(objCopy)
+    objCopy.shape = rotateObject3D(objCopy)
+    objCopy.shape = translateObject3D(objCopy)
 
 
-  // fix edge case of depth bug
-  // fixed
+    newShapes.push(objCopy.shape)
+  }
+  
+  return newShapes
+}
 
 export function renderScene3D(ctx: CanvasRenderingContext2D, scene3D: Scene3D) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);

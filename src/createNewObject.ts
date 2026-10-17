@@ -39,11 +39,12 @@ export class cube3D implements Object3D {
   shape = cube3DValues
   translation = {x: 0, y: 0, z: 0}
   rotation = {x: 0, y: 0, z: 0}
+  scale = {x: 1, y: 1, z: 1}
   midpoint = findMidpoint(cube3DValues)
 }
 
 export class camera3D implements Camera {
-  point = {x: 0, y: 0, z: -500}
+  point = {x: 400, y: 300, z: -500} // hardcoded Camera eye position
   camWidth = 800
   camHeight = 550
   translation = {x: 0, y: 0, z: 0}

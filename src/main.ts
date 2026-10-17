@@ -26,31 +26,9 @@ function main() {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   // ctx.translate(canvas.width / 2, canvas.height / 2)
 
-  // properly assign the eye position and width + height of the camera
-  scene3D.eye.point.x = canvas.width / 2
-  scene3D.eye.point.y = canvas.height / 2
-
-  // scene3D.eye.camHeight = canvas.height / 2
-  // scene3D.eye.camWidth = canvas.width / 2
 
   setUpAllListeners()
-  let rotY = 0
-  let xcord = 0
-  let left = false
 
-
-  // let hoverElem: HTMLUListElement
-
-  // objList?.addEventListener('mouseover', (event: MouseEvent) => {
-  //   hoverElem.style.backgroundColor = "transparent"
-
-  //   const curListItem = event.target as HTMLUListElement
-  //   const curItem = curListItem.closest("li")
-
-  //   curListItem.style.backgroundColor = "white"
-    
-  //   hoverElem = curItem
-  // })
 
   const gameLoop = () => {
 

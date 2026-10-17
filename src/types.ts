@@ -25,6 +25,7 @@ export interface Object3D {
   midpoint: Point3D;  // cache the original points
   translation: Point3D;
   rotation: Point3D;  // rotation around the midpoint in radians
+  scale: Point3D;
 }
 
 export interface Camera {
@@ -47,6 +48,6 @@ export interface Scene3D {
 
 export interface Editor3D {
   selectedObjs: Object3D[];
-  curEditorState: "idle" | "grab" | "rotate";
+  curEditorState: "idle" | "grab" | "rotate" | "scale";
   curAxis: "x" | "y" | "z" | null;
 }

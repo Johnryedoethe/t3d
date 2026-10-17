@@ -14,6 +14,7 @@ export function setUpAllListeners() {
   checkForDuplicatesInObjects()
   editActiveObjectsListener()
   clickOnObjListListener()
+  hoverObjListElemListener()
 
   // testing values
   editor3D.selectedObjs.push(scene3D.objects[0])
@@ -45,6 +46,12 @@ function editorKeyBindsListener() {
 
     if (event.key === 'g') {
       editor3D.curEditorState = "grab"
+      editor3D.curAxis = null
+      mouseEdit = false
+    }
+
+    if (event.key === 's') {
+      editor3D.curEditorState = "scale"
       editor3D.curAxis = null
       mouseEdit = false
     }
@@ -168,6 +175,29 @@ function editActiveObjectsListener() {
 
       prevPos = {x: event.clientX, y: event.clientY}
     }
+
+     if (editor3D.curEditorState === "scale") {
+      if (!editor3D.curAxis) return
+
+      for (let i = 0; i < editor3D.selectedObjs.length; i++) {
+        // receive the reference
+        const scale = editor3D.selectedObjs[i].scale
+        
+        if (editor3D.curAxis === "z") {
+          scale[editor3D.curAxis] -= ((event.clientX + event.clientY) - (prevPos.x + prevPos.y)) / 100
+          continue
+        }
+
+        if (editor3D.curAxis === "x") {
+          scale[editor3D.curAxis] += ((event.clientX + event.clientY) - (prevPos.x + prevPos.y)) / 100
+          continue
+        }
+
+        scale[editor3D.curAxis] += ((event.clientX + event.clientY) - (prevPos.x + prevPos.y)) / 100
+      }
+
+      prevPos = {x: event.clientX, y: event.clientY}
+    }
   }) 
 }
 
@@ -186,5 +216,20 @@ function clickOnObjListListener() {
     }
 
     editor3D.selectedObjs.push(scene3D.objects[curId])
+  })
+}
+
+function hoverObjListElemListener() {
+  let hoverElem: HTMLLIElement
+
+  objList?.addEventListener('mouseover', (event: MouseEvent) => {
+    hoverElem.style.backgroundColor = "transparent"
+
+    const curListItem = event.target as HTMLUListElement
+    const curItem = curListItem.closest("li")
+
+    curListItem.style.backgroundColor = "white"
+    
+    hoverElem = curItem
   })
 }
