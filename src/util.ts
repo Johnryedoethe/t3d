@@ -1,4 +1,4 @@
-import { Point3D, Shape3D } from "./types";
+import { Point3D, scene3D, Shape3D } from "./types";
 
 
 export function findMidpoint(obj3d: Shape3D): Point3D {
@@ -17,4 +17,14 @@ export function findMidpoint(obj3d: Shape3D): Point3D {
     midpoint.z = midpoint.z / points.length
 
   return midpoint
+}
+
+export function isIdxInSelectedObjMap(id: number, scene3D: scene3D): boolean {
+  for (let i = 0; i < scene3D.editor.selectedObjsMap.length - 1; i++) {
+    if (scene3D.editor.selectedObjsMap[i] === id) {
+      return true
+    }
+  }
+
+  return scene3D.editor.selectedObjsMap[scene3D.editor.selectedObjsMap.length - 1] === id
 }

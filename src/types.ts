@@ -28,7 +28,7 @@ export interface Object3D {
   scale: Point3D;
 }
 
-export interface Camera {
+export interface camera {
   point: Point3D;
   camWidth: number; // cam height and width are in px
   camHeight: number;
@@ -41,13 +41,14 @@ export interface Shape2D {
   edges: Edge[];
 }
 
-export interface Scene3D {
+export interface scene3D {
   objects: Object3D[]; // edit the properties of Object3D which will be rendered
-  eye: Camera; // can be mutated
+  eye: camera; // can be mutated
+  editor: editor3D;
 }
 
-export interface Editor3D {
-  selectedObjs: Object3D[];
+export interface editor3D {
+  selectedObjsMap: number[];
   curEditorState: "idle" | "grab" | "rotate" | "scale";
   curAxis: "x" | "y" | "z" | null;
 }

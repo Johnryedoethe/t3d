@@ -1,4 +1,4 @@
-import { Shape3D, Object3D, Camera } from "./types"
+import { Shape3D, Object3D, camera, editor3D } from "./types"
 import { findMidpoint } from "./util" 
 
 
@@ -43,10 +43,16 @@ export class cube3D implements Object3D {
   midpoint = findMidpoint(cube3DValues)
 }
 
-export class camera3D implements Camera {
+export class camera3D implements camera {
   point = {x: 400, y: 300, z: -500} // hardcoded Camera eye position
   camWidth = 800
   camHeight = 550
   translation = {x: 0, y: 0, z: 0}
   rotation = {x: 0, y: 0, z: 0}
+}
+
+export class Editor3D implements editor3D {
+  selectedObjsMap: number[] = []
+  curEditorState: editor3D["curEditorState"] = "idle"
+  curAxis: editor3D["curAxis"] = null
 }

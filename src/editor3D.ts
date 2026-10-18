@@ -1,71 +1,77 @@
 import { Point2D } from "./types"
-import { scene3D, editor3D } from "./main"
+import { Scene3D } from "./main"
+
+import { isIdxInSelectedObjMap } from "./util"
 
 
 let editorContent = document.getElementById("editorInfo")
 const objList = document.getElementById("objList")
+
+let hoverElem: HTMLLIElement
 
 let mouseEdit = false
 let firstMouseMovement = false
 let prevPos: Point2D = {x: 0, y: 0}
 
 export function setUpAllListeners() {
+  // testing values
+  Scene3D.editor.selectedObjsMap.push(0)
+
   editorKeyBindsListener()
-  checkForDuplicatesInObjects()
+  ShowAllObjects()
   editActiveObjectsListener()
   clickOnObjListListener()
   hoverObjListElemListener()
-
-  // testing values
-  editor3D.selectedObjs.push(scene3D.objects[0])
-  console.log(editor3D.selectedObjs)
 }
 
 function editorKeyBindsListener() {
-  editorContent.textContent = "select an object"
+  if (Scene3D.editor.selectedObjsMap.length !== 0) {
+    editorContent.textContent = "transform an object"
+  } else {
+    editorContent.textContent = "select an object"
+  }
   document.addEventListener('keypress', (event) => {
-    if (editor3D.selectedObjs.length === 0) {
+    if (Scene3D.editor.selectedObjsMap.length === 0) {
       editorContent.textContent = "select an object"
       return
     }
     
-
-    if (event.key === 'Escape') {
-      editor3D.curEditorState = "idle"
+    if (event.key === 'q') {
+      Scene3D.editor.curEditorState = "idle"
       mouseEdit = false
-      editor3D.curAxis = null
-      editorContent.textContent = "transform a shape"
+      Scene3D.editor.curAxis = null
+      editorContent.textContent = "transform an object"
       return
     }
 
     if (event.key === 'r') {
-      editor3D.curEditorState = "rotate"
-      editor3D.curAxis = null
+      Scene3D.editor.curEditorState = "rotate"
+      Scene3D.editor.curAxis = null
       mouseEdit = false
     }
 
     if (event.key === 'g') {
-      editor3D.curEditorState = "grab"
-      editor3D.curAxis = null
+      Scene3D.editor.curEditorState = "grab"
+      Scene3D.editor.curAxis = null
       mouseEdit = false
     }
 
     if (event.key === 's') {
-      editor3D.curEditorState = "scale"
-      editor3D.curAxis = null
+      Scene3D.editor.curEditorState = "scale"
+      Scene3D.editor.curAxis = null
       mouseEdit = false
     }
 
-    if (editor3D.curEditorState === "idle") {
-      editor3D.curAxis = null
+    if (Scene3D.editor.curEditorState === "idle") {
+      Scene3D.editor.curAxis = null
       mouseEdit = false
-      editor3D.curAxis = null
-      editorContent.textContent = "transform a shape"
+      Scene3D.editor.curAxis = null
+      editorContent.textContent = "transform an object"
       return
     }
 
     if (event.key === 'x') {
-      editor3D.curAxis = "x"
+      Scene3D.editor.curAxis = "x"
       mouseEdit = true
       firstMouseMovement = true
       editorContent.textContent = "x: "
@@ -73,7 +79,7 @@ function editorKeyBindsListener() {
     }
 
     if (event.key === 'y') {
-      editor3D.curAxis = "y"
+      Scene3D.editor.curAxis = "y"
       mouseEdit = true
       firstMouseMovement = true
       editorContent.textContent = "y: "
@@ -81,7 +87,7 @@ function editorKeyBindsListener() {
     }
 
     if (event.key === 'z') {
-      editor3D.curAxis = "z"
+      Scene3D.editor.curAxis = "z"
       mouseEdit = true
       firstMouseMovement = true
       editorContent.textContent = "z: "
@@ -89,111 +95,125 @@ function editorKeyBindsListener() {
     }
 
 
-    if (!editor3D.curAxis) {
+    if (!Scene3D.editor.curAxis) {
       editorContent.textContent = "please select an axis of transformation"
       return
     }   
   })
 }
 
-function checkForDuplicatesInObjects() {
+function ShowAllObjects() {
   const duplicateNameMap = new Map<string, number>()
 
-  for (let i = 0; i < scene3D.objects.length; i++) {
+  for (let i = 0; i < Scene3D.objects.length; i++) {
     const newLiElem = document.createElement("li")
-    const objName = scene3D.objects[i].name
+    const objName = Scene3D.objects[i].name
 
     if (duplicateNameMap.has(objName)) {
-      scene3D.objects[i].name = "different " + objName
+      Scene3D.objects[i].name = "different " + objName
     }
 
-    newLiElem.textContent = scene3D.objects[i].name
+    newLiElem.textContent = Scene3D.objects[i].name
     newLiElem.dataset.id = JSON.stringify(i)
+    newLiElem.style.paddingBottom = "5%"
+    newLiElem.style.wordBreak
+    newLiElem.style.textDecorationColor = "white"
 
-    duplicateNameMap.set(scene3D.objects[i].name, i)
+    duplicateNameMap.set(Scene3D.objects[i].name, i)
 
     objList?.appendChild(newLiElem)
-    console.log(newLiElem)
   }
 }
 
 function editActiveObjectsListener() {
-  document.addEventListener('mousemove', (event) => {
+  window.addEventListener('mousemove', (event) => {
     if (!mouseEdit) {
       return
     }
 
+    const mousePosX = event.clientX
+    const mousePosY = event.clientY
+
     if (firstMouseMovement) {
       firstMouseMovement = false
-      prevPos = {x: event.clientX, y: event.clientY}
+      prevPos = {x: mousePosX, y: mousePosY}
     }
 
-    if (editor3D.curEditorState === "grab") {
-      if (!editor3D.curAxis) return
+    const mouseMovement = ((mousePosX + mousePosY) - (prevPos.x + prevPos.y))
 
-      for (let i = 0; i < editor3D.selectedObjs.length; i++) {
+    if (Scene3D.editor.curEditorState === "grab") {
+      if (!Scene3D.editor.curAxis) {
+        return
+      }
+
+      for (let i = 0; i < Scene3D.editor.selectedObjsMap.length; i++) {
         // receive the reference
-        const translate = editor3D.selectedObjs[i].translation
+        const selectedObjId = Scene3D.editor.selectedObjsMap[i]
+        const translate = Scene3D.objects[selectedObjId].translation
         
-        if (editor3D.curAxis === "z") {
-          translate[editor3D.curAxis] -= (event.clientX + event.clientY) - (prevPos.x + prevPos.y)
+        if (Scene3D.editor.curAxis === "z") {
+          translate[Scene3D.editor.curAxis] -= mouseMovement
           continue
         }
 
-        if (editor3D.curAxis === "x") {
-          translate[editor3D.curAxis] += (event.clientX + event.clientY) - (prevPos.x + prevPos.y)
+        if (Scene3D.editor.curAxis === "x") {
+          translate[Scene3D.editor.curAxis] += mouseMovement
           continue
         }
 
-        translate[editor3D.curAxis] += (event.clientX + event.clientY) - (prevPos.x + prevPos.y)
+        translate[Scene3D.editor.curAxis] += mouseMovement
       }
 
       prevPos = {x: event.clientX, y: event.clientY}
     }
 
-    if (editor3D.curEditorState === "rotate") {
-      if (!editor3D.curAxis) return
+    if (Scene3D.editor.curEditorState === "rotate") {
+      if (!Scene3D.editor.curAxis) {
+        return
+      }
 
-      console.log(editor3D.selectedObjs.length)
-      for (let i = 0; i < editor3D.selectedObjs.length; i++) {
+      for (let i = 0; i < Scene3D.editor.selectedObjsMap.length; i++) {
         // receive the reference
-        const rotate = editor3D.selectedObjs[i].rotation
-        console.log(editor3D.selectedObjs[i].rotation)
+        const selectedObjId = Scene3D.editor.selectedObjsMap[i]
+        const rotate = Scene3D.objects[selectedObjId].rotation
         
-        if (editor3D.curAxis === "z") {
-          rotate[editor3D.curAxis] -= (event.clientX + event.clientY) - (prevPos.x + prevPos.y)
+        if (Scene3D.editor.curAxis === "z") {
+          rotate[Scene3D.editor.curAxis] -= mouseMovement
           continue
         }
 
-        if (editor3D.curAxis === "x") {
-          rotate[editor3D.curAxis] += (event.clientX + event.clientY) - (prevPos.x + prevPos.y)
+        if (Scene3D.editor.curAxis === "x") {
+          rotate[Scene3D.editor.curAxis] += mouseMovement
           continue
         }
 
-        rotate[editor3D.curAxis] += (event.clientX + event.clientY) - (prevPos.x + prevPos.y)
+        rotate[Scene3D.editor.curAxis] += mouseMovement
       }
 
       prevPos = {x: event.clientX, y: event.clientY}
     }
 
-     if (editor3D.curEditorState === "scale") {
-      if (!editor3D.curAxis) return
+    if (Scene3D.editor.curEditorState === "scale") {
+      if (!Scene3D.editor.curAxis) {
+        return
+      }
 
-      for (let i = 0; i < editor3D.selectedObjs.length; i++) {
+      for (let i = 0; i < Scene3D.editor.selectedObjsMap.length; i++) {
         // receive the reference
-        const scale = editor3D.selectedObjs[i].scale
+        const selectedObjId = Scene3D.editor.selectedObjsMap[i]
+        const scale = Scene3D.objects[selectedObjId].scale
         
-        if (editor3D.curAxis === "z") {
-          scale[editor3D.curAxis] -= ((event.clientX + event.clientY) - (prevPos.x + prevPos.y)) / 100
+        if (Scene3D.editor.curAxis === "z") {
+          scale[Scene3D.editor.curAxis] -= mouseMovement / 100
           continue
         }
 
-        if (editor3D.curAxis === "x") {
-          scale[editor3D.curAxis] += ((event.clientX + event.clientY) - (prevPos.x + prevPos.y)) / 100
+        if (Scene3D.editor.curAxis === "x") {
+          scale[Scene3D.editor.curAxis] += mouseMovement / 100
           continue
         }
 
-        scale[editor3D.curAxis] += ((event.clientX + event.clientY) - (prevPos.x + prevPos.y)) / 100
+        scale[Scene3D.editor.curAxis] += mouseMovement / 100
       }
 
       prevPos = {x: event.clientX, y: event.clientY}
@@ -203,32 +223,66 @@ function editActiveObjectsListener() {
 
 function clickOnObjListListener() {
   objList?.addEventListener('click', (event: MouseEvent) => {
+    if (Scene3D.editor.curEditorState !== "idle") {
+      return
+    }
+
     const curListItem = event.target as HTMLUListElement
     const curItem = curListItem.closest("li")
 
     const curId = Number(curItem?.dataset.id)
-    for (let i = 0; i < editor3D.selectedObjs.length; i++) {
-      if (editor3D.selectedObjs[i] === scene3D.objects[curId]) {
-        editor3D.selectedObjs.splice(curId, 1)
-        mouseEdit = false
+
+    if (typeof curId !== "number") {
+      return
+    }
+
+    for (let i = 0; i < Scene3D.editor.selectedObjsMap.length; i++) {
+      if (Scene3D.editor.selectedObjsMap[i] === curId) {
+        Scene3D.editor.selectedObjsMap.splice(curId, 1)
+        console.log("rm")
         return
       }
     }
 
-    editor3D.selectedObjs.push(scene3D.objects[curId])
+    
+
+    Scene3D.editor.selectedObjsMap.push(curId)
+    console.log(Scene3D.editor.selectedObjsMap)
   })
 }
 
 function hoverObjListElemListener() {
-  let hoverElem: HTMLLIElement
-
   objList?.addEventListener('mouseover', (event: MouseEvent) => {
-    hoverElem.style.backgroundColor = "transparent"
+    if (Scene3D.editor.curEditorState !== "idle") {
+      return
+    }
+
+    if (!hoverElem) {
+      return
+    }
+
+    const prevObjId = Number(hoverElem.dataset.id)
+
+    if (hoverElem && !isIdxInSelectedObjMap(prevObjId, Scene3D)) {
+      hoverElem.style.backgroundColor = "transparent"
+    }
 
     const curListItem = event.target as HTMLUListElement
     const curItem = curListItem.closest("li")
 
-    curListItem.style.backgroundColor = "white"
+   
+
+    if (!curItem && !isIdxInSelectedObjMap(prevObjId, Scene3D)) {
+      hoverElem.style.backgroundColor = "transparent"
+      return
+    }
+    if (!curItem) {
+      return
+    }
+
+    if (!isIdxInSelectedObjMap(prevObjId, Scene3D)) {
+      curItem.style.backgroundColor = "aliceblue"
+    }
     
     hoverElem = curItem
   })

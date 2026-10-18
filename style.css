@@ -4,18 +4,42 @@ body, h1, h2, h3, h4, p, ul, ol {
 }
 
 #mainProject {
-  background-color:rgb(195, 195, 48);
+  background-color: #404040;
   height: 100%;
   width: 100%;
+  position: absolute;
+}
+
+#sceneEditorContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
 }
 
 #objListContainer {
-  background-color: rgb(28, 105, 172);
-  width: 30%;
+  background-color: #282828;
+  width: 20%;
+  height: 100%;
+}
+
+#editorInfoContainer {
+  width: 100%;
+  background-color: grey;
+  padding: 1% 0%;
 }
 
 #2d_canvas {
-  width: 70vw;
-  height: 90vh;
+  width: 100%;
+  height: 100%;
   background-color: gray;
 }
+
+#sceneHead {
+  padding-bottom: 5%;
+}
+
+#objList {
+  list-style-type: none;
+  padding-left: 15%;
+}
+

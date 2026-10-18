@@ -1,10 +1,11 @@
-import { Point2D, Point3D, Shape3D, Shape2D, Scene3D, Camera } from "./types";
-
+import { Point2D, Point3D, Shape3D, Shape2D, scene3D, camera } from "./types";
 import { rotateObject3D } from "./transformImplementations/rotations"
 import { translateObject3D } from "./transformImplementations/translations"
 import { scaleObject3D } from "./transformImplementations/scale"
 
-function transformScene3D(scene: Scene3D): Shape3D[] {
+// refactor later
+
+function transformScene3D(scene: scene3D): Shape3D[] {
   const newShapes: Shape3D[] = []
 
   // duplicate objects
@@ -14,25 +15,27 @@ function transformScene3D(scene: Scene3D): Shape3D[] {
     objCopy.shape = rotateObject3D(objCopy)
     objCopy.shape = translateObject3D(objCopy)
 
-
     newShapes.push(objCopy.shape)
   }
   
   return newShapes
 }
 
-export function renderScene3D(ctx: CanvasRenderingContext2D, scene3D: Scene3D) {
+export function renderScene3D(ctx: CanvasRenderingContext2D, scene3D: scene3D) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
   const newShapes: Shape3D[] = transformScene3D(scene3D)
+  const projectedPoints2D: Shape2D[] = []
 
   for (let i = 0; i < newShapes.length; i++) {
     const curShape2D = project3DTo2D(newShapes[i], scene3D.eye)
-    drawObject2D(ctx, curShape2D, newShapes[i], scene3D.eye)
+    projectedPoints2D.push(curShape2D)
   }
+
+  drawShape2D(ctx, projectedPoints2D, scene3D)    
 }
 
-function project3DTo2D(shape: Shape3D, eye: Camera): Shape2D {
+function project3DTo2D(shape: Shape3D, eye: camera): Shape2D {
   // assume that values have already shifted and the value has to be calculated 
   const points3D: Point3D[] = shape.points
   const projectedPoints2D: Point2D[] = calculateProjection(points3D, eye)
@@ -45,30 +48,44 @@ function project3DTo2D(shape: Shape3D, eye: Camera): Shape2D {
   return obj2D;
 }
 
-function drawObject2D(ctx: CanvasRenderingContext2D, shape2d: Shape2D, shape3d: Shape3D , eye: Camera) {
+function drawShape2D(ctx: CanvasRenderingContext2D, shape2d: Shape2D[], scene3D: scene3D) {
+  let selectedPoint = 0
 
-  for (let i = 0; i < shape2d.edges.length; i++) {
-    const edge = shape2d.edges[i]
+  for (let j = 0; j < shape2d.length; j++) {
+    const selected = scene3D.editor.selectedObjsMap[selectedPoint] === j
 
-    const p1Idx = edge.pointIdx1
-    const p2Idx = edge.pointIdx2
+    for (let i = 0; i < shape2d[j].edges.length; i++) {
+      const edge = shape2d[j].edges[i]
 
-    const p1 = shape2d.points[p1Idx]
-    const p2 = shape2d.points[p2Idx]
+      const p1Idx = edge.pointIdx1
+      const p2Idx = edge.pointIdx2
 
-    const p1z = shape3d.points[p1Idx].z
-    const p2z = shape3d.points[p2Idx].z
+      const p1 = shape2d[j].points[p1Idx]
+      const p2 = shape2d[j].points[p2Idx]
+
+      const p1z = scene3D.objects[j].shape.points[p1Idx].z
+      const p2z = scene3D.objects[j].shape.points[p2Idx].z
 
 
-    if (pointIsNotInView(eye, p1) && pointIsNotInView(eye, p2) || p1z <= -480 && p2z <= -480) {
-      continue
+      if (pointIsNotInView(scene3D.eye, p1) && pointIsNotInView(scene3D.eye, p2) || p1z <= scene3D.eye.point.z || p2z <= scene3D.eye.point.z) {
+        continue
+      }
+
+      if (selected) {
+        drawLineSelectedSegment(ctx, p1, p2)
+        
+      } else {
+        drawLineUnselectedSegment(ctx, p1, p2)
+      }
+    }  
+
+    if (selected) {
+      selectedPoint++
     }
-
-    drawLineUnselectedSegment(ctx, p1, p2)
-  }  
+  }
 }
 
-function calculateProjection(points3D: Point3D[], eye: Camera): Point2D[] {
+function calculateProjection(points3D: Point3D[], eye: camera): Point2D[] {
   const projectedPoints2D: Point2D[] = []
 
   for (let i = 0; i < points3D.length; i++) {
@@ -115,7 +132,19 @@ function drawLineUnselectedSegment(ctx: CanvasRenderingContext2D, p1: Point2D, p
   ctx.stroke();
 }
 
-function pointIsNotInView(eye: Camera, point: Point2D): boolean {
+function drawLineSelectedSegment(ctx: CanvasRenderingContext2D, p1: Point2D, p2: Point2D) {
+  ctx.beginPath();
+
+  ctx.moveTo(p1.x, p1.y);
+  ctx.lineTo(p2.x, p2.y);
+
+  ctx.lineWidth = 2;          
+  ctx.strokeStyle = '#e09f26'; 
+
+  ctx.stroke();
+}
+
+function pointIsNotInView(eye: camera, point: Point2D): boolean {
   return point.y > eye.point.y + ((eye.camHeight + 100) / 2) || 
     point.y < eye.point.y - ((eye.camHeight + 100)/ 2) ||
     point.x > eye.point.x + ((eye.camWidth + 100) / 2) ||
