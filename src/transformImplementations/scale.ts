@@ -1,4 +1,4 @@
-import { Object3D, Shape3D, Point3D } from "../types";
+import { Object3D, Shape3D, Point3D, camera } from "../types";
 
 export function scaleObject3D(obj3D: Object3D): Shape3D {
   const { points, edges } = obj3D.shape

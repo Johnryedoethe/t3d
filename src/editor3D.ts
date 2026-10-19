@@ -1,13 +1,11 @@
 import { Point2D } from "./types"
 import { Scene3D } from "./main"
 
-import { isIdxInSelectedObjMap } from "./util"
+// import { isIdxInSelectedObjMap } from "./util"
 
 
 let editorContent = document.getElementById("editorInfo")
 const objList = document.getElementById("objList")
-
-let hoverElem: HTMLLIElement
 
 let mouseEdit = false
 let firstMouseMovement = false
@@ -15,13 +13,12 @@ let prevPos: Point2D = {x: 0, y: 0}
 
 export function setUpAllListeners() {
   // testing values
-  Scene3D.editor.selectedObjsMap.push(0)
+  // Scene3D.editor.selectedObjsMap.push(0)
 
   editorKeyBindsListener()
   ShowAllObjects()
   editActiveObjectsListener()
   clickOnObjListListener()
-  hoverObjListElemListener()
 }
 
 function editorKeyBindsListener() {
@@ -31,6 +28,8 @@ function editorKeyBindsListener() {
     editorContent.textContent = "select an object"
   }
   document.addEventListener('keypress', (event) => {
+    console.log(Scene3D.editor.selectedObjsMap)
+
     if (Scene3D.editor.selectedObjsMap.length === 0) {
       editorContent.textContent = "select an object"
       return
@@ -115,9 +114,10 @@ function ShowAllObjects() {
 
     newLiElem.textContent = Scene3D.objects[i].name
     newLiElem.dataset.id = JSON.stringify(i)
-    newLiElem.style.paddingBottom = "5%"
-    newLiElem.style.wordBreak
-    newLiElem.style.textDecorationColor = "white"
+    newLiElem.className = "ObjLiElem"
+    // newLiElem.style.paddingBottom = "5%"
+    // newLiElem.style.wordBreak
+    // newLiElem.style.textDecorationColor = "white"
 
     duplicateNameMap.set(Scene3D.objects[i].name, i)
 
@@ -223,9 +223,10 @@ function editActiveObjectsListener() {
 
 function clickOnObjListListener() {
   objList?.addEventListener('click', (event: MouseEvent) => {
-    if (Scene3D.editor.curEditorState !== "idle") {
-      return
-    }
+    // if (Scene3D.editor.curEditorState !== "idle") {
+    //   return
+    // }
+
 
     const curListItem = event.target as HTMLUListElement
     const curItem = curListItem.closest("li")
@@ -239,51 +240,51 @@ function clickOnObjListListener() {
     for (let i = 0; i < Scene3D.editor.selectedObjsMap.length; i++) {
       if (Scene3D.editor.selectedObjsMap[i] === curId) {
         Scene3D.editor.selectedObjsMap.splice(curId, 1)
-        console.log("rm")
+        if (Scene3D.editor.selectedObjsMap.length === 0) {
+          editorContent.textContent = "select an object"
+        }
+
         return
       }
     }
 
-    
-
     Scene3D.editor.selectedObjsMap.push(curId)
-    console.log(Scene3D.editor.selectedObjsMap)
   })
 }
 
-function hoverObjListElemListener() {
-  objList?.addEventListener('mouseover', (event: MouseEvent) => {
-    if (Scene3D.editor.curEditorState !== "idle") {
-      return
-    }
+// function hoverObjListElemListener() {
+//   objList?.addEventListener('mouseover', (event: MouseEvent) => {
+//     if (Scene3D.editor.curEditorState !== "idle") {
+//       return
+//     }
 
-    if (!hoverElem) {
-      return
-    }
+//     if (!hoverElem) {
+//       return
+//     }
 
-    const prevObjId = Number(hoverElem.dataset.id)
+//     const prevObjId = Number(hoverElem.dataset.id)
 
-    if (hoverElem && !isIdxInSelectedObjMap(prevObjId, Scene3D)) {
-      hoverElem.style.backgroundColor = "transparent"
-    }
+//     if (hoverElem && !isIdxInSelectedObjMap(prevObjId, Scene3D)) {
+//       hoverElem.style.backgroundColor = "transparent"
+//     }
 
-    const curListItem = event.target as HTMLUListElement
-    const curItem = curListItem.closest("li")
+//     const curListItem = event.target as HTMLUListElement
+//     const curItem = curListItem.closest("li")
 
    
 
-    if (!curItem && !isIdxInSelectedObjMap(prevObjId, Scene3D)) {
-      hoverElem.style.backgroundColor = "transparent"
-      return
-    }
-    if (!curItem) {
-      return
-    }
+//     if (!curItem && !isIdxInSelectedObjMap(prevObjId, Scene3D)) {
+//       hoverElem.style.backgroundColor = "transparent"
+//       return
+//     }
+//     if (!curItem) {
+//       return
+//     }
 
-    if (!isIdxInSelectedObjMap(prevObjId, Scene3D)) {
-      curItem.style.backgroundColor = "aliceblue"
-    }
+//     if (!isIdxInSelectedObjMap(prevObjId, Scene3D)) {
+//       curItem.style.backgroundColor = "aliceblue"
+//     }
     
-    hoverElem = curItem
-  })
-}
+//     hoverElem = curItem
+//   })
+// }

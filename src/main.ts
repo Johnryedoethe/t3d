@@ -18,21 +18,30 @@ function main() {
   const canvas = document.getElementById("2d_canvas") as HTMLCanvasElement;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-  canvas.width = 800
-  canvas.height = 600
+  canvas.width = window.innerWidth / 1.3
+  canvas.height = window.innerHeight / 1.2
 
+  Scene3D.eye.camWidth = canvas.width
+  Scene3D.eye.camHeight = canvas.height
   // ctx.translate(canvas.width / 2, canvas.height / 2)
 
 
-  setUpAllListeners()
-
 
   const gameLoop = () => {
+    canvas.width = window.innerWidth / 1.3
+    canvas.height = window.innerHeight / 1.2
+    Scene3D.eye.camWidth = canvas.width
+    Scene3D.eye.camHeight = canvas.height
+    Scene3D.eye.point.x = canvas.width / 2
+    Scene3D.eye.point.y = canvas.height / 2
+
 
     renderScene3D(ctx, Scene3D)
   }
 
   setInterval(gameLoop, 30)
+
+  setUpAllListeners()
 }
 
 window.addEventListener("DOMContentLoaded", main);

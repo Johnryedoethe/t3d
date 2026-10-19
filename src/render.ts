@@ -24,6 +24,9 @@ function transformScene3D(scene: scene3D): Shape3D[] {
 export function renderScene3D(ctx: CanvasRenderingContext2D, scene3D: scene3D) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+  ctx.fillStyle = "#404040"
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+
   const newShapes: Shape3D[] = transformScene3D(scene3D)
   const projectedPoints2D: Shape2D[] = []
 
@@ -32,7 +35,7 @@ export function renderScene3D(ctx: CanvasRenderingContext2D, scene3D: scene3D) {
     projectedPoints2D.push(curShape2D)
   }
 
-  drawShape2D(ctx, projectedPoints2D, scene3D)    
+  drawShape2D(ctx, projectedPoints2D, scene3D, newShapes)    
 }
 
 function project3DTo2D(shape: Shape3D, eye: camera): Shape2D {
@@ -48,7 +51,7 @@ function project3DTo2D(shape: Shape3D, eye: camera): Shape2D {
   return obj2D;
 }
 
-function drawShape2D(ctx: CanvasRenderingContext2D, shape2d: Shape2D[], scene3D: scene3D) {
+function drawShape2D(ctx: CanvasRenderingContext2D, shape2d: Shape2D[], scene3D: scene3D, transformedShapes: Shape3D[]) {
   let selectedPoint = 0
 
   for (let j = 0; j < shape2d.length; j++) {
@@ -63,11 +66,12 @@ function drawShape2D(ctx: CanvasRenderingContext2D, shape2d: Shape2D[], scene3D:
       const p1 = shape2d[j].points[p1Idx]
       const p2 = shape2d[j].points[p2Idx]
 
-      const p1z = scene3D.objects[j].shape.points[p1Idx].z
-      const p2z = scene3D.objects[j].shape.points[p2Idx].z
+      const p1z = transformedShapes[j].points[p1Idx].z
+      const p2z = transformedShapes[j].points[p1Idx].z
 
 
-      if (pointIsNotInView(scene3D.eye, p1) && pointIsNotInView(scene3D.eye, p2) || p1z <= scene3D.eye.point.z || p2z <= scene3D.eye.point.z) {
+      console.log(p2z)
+      if (pointIsNotInView(scene3D.eye, p1) && pointIsNotInView(scene3D.eye, p2) && p1z <= scene3D.eye.point.z || p2z <= scene3D.eye.point.z) {
         continue
       }
 
@@ -145,8 +149,8 @@ function drawLineSelectedSegment(ctx: CanvasRenderingContext2D, p1: Point2D, p2:
 }
 
 function pointIsNotInView(eye: camera, point: Point2D): boolean {
-  return point.y > eye.point.y + ((eye.camHeight + 100) / 2) || 
-    point.y < eye.point.y - ((eye.camHeight + 100)/ 2) ||
-    point.x > eye.point.x + ((eye.camWidth + 100) / 2) ||
-    point.x < eye.point.x - ((eye.camWidth + 100)/ 2)
+  return point.y > eye.point.y + ((eye.camHeight) / 2) || 
+    point.y < eye.point.y - ((eye.camHeight) / 2) ||
+    point.x > eye.point.x + ((eye.camWidth) / 2) ||
+    point.x < eye.point.x - ((eye.camWidth) / 2)
 }

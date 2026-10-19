@@ -1,4 +1,4 @@
-import { Object3D, Point2D, Point3D, Shape3D } from "../types";
+import { Object3D, Point2D, Point3D, Shape3D, camera } from "../types";
 
 export function rotateObject3D(obj3D: Object3D): Shape3D {
   const {shape, midpoint, rotation} = obj3D
