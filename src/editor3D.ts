@@ -1,20 +1,15 @@
 import { Point2D } from "./types"
 import { Scene3D } from "./main"
 
-// import { isIdxInSelectedObjMap } from "./util"
 
-
-let editorContent = document.getElementById("editorInfo")
-const objList = document.getElementById("objList")
+let editorContent = document.getElementById("editorInfo") as HTMLParagraphElement
+const objList = document.getElementById("objList") as HTMLUListElement
 
 let mouseEdit = false
 let firstMouseMovement = false
 let prevPos: Point2D = {x: 0, y: 0}
 
 export function setUpAllListeners() {
-  // testing values
-  // Scene3D.editor.selectedObjsMap.push(0)
-
   editorKeyBindsListener()
   ShowAllObjects()
   editActiveObjectsListener()
@@ -27,9 +22,9 @@ function editorKeyBindsListener() {
   } else {
     editorContent.textContent = "select an object"
   }
-  document.addEventListener('keypress', (event) => {
-    console.log(Scene3D.editor.selectedObjsMap)
 
+  
+  document.addEventListener('keypress', (event: KeyboardEvent) => {
     if (Scene3D.editor.selectedObjsMap.length === 0) {
       editorContent.textContent = "select an object"
       return
@@ -102,6 +97,7 @@ function editorKeyBindsListener() {
 }
 
 function ShowAllObjects() {
+  objList
   const duplicateNameMap = new Map<string, number>()
 
   for (let i = 0; i < Scene3D.objects.length; i++) {
@@ -126,7 +122,7 @@ function ShowAllObjects() {
 }
 
 function editActiveObjectsListener() {
-  window.addEventListener('mousemove', (event) => {
+  window.addEventListener('mousemove', (event: MouseEvent) => {
     if (!mouseEdit) {
       return
     }
@@ -227,7 +223,6 @@ function clickOnObjListListener() {
     //   return
     // }
 
-
     const curListItem = event.target as HTMLUListElement
     const curItem = curListItem.closest("li")
 
@@ -237,9 +232,14 @@ function clickOnObjListListener() {
       return
     }
 
+
     for (let i = 0; i < Scene3D.editor.selectedObjsMap.length; i++) {
-      if (Scene3D.editor.selectedObjsMap[i] === curId) {
-        Scene3D.editor.selectedObjsMap.splice(curId, 1)
+      if (Scene3D.objects[Scene3D.editor.selectedObjsMap[i]] === Scene3D.objects[curId]) {
+        Scene3D.editor.selectedObjsMap.splice(i, 1)
+        console.log(Scene3D.editor.selectedObjsMap)
+
+        curItem.style.color = "white"
+        curItem.style.backgroundColor = "#282828"
         if (Scene3D.editor.selectedObjsMap.length === 0) {
           editorContent.textContent = "select an object"
         }
@@ -248,7 +248,13 @@ function clickOnObjListListener() {
       }
     }
 
+
+
     Scene3D.editor.selectedObjsMap.push(curId)
+    curItem.style.color = "#e09f26"
+    curItem.style.backgroundColor = "#334d80"
+    console.log(Scene3D.editor.selectedObjsMap)
+
   })
 }
 
