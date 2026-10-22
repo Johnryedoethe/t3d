@@ -33,7 +33,7 @@ const cube3DValues: Shape3D = {
   ],
 }
 
-
+// base values
 export class cube3D implements Object3D {
   name = "cube"
   shape = cube3DValues
@@ -46,7 +46,7 @@ export class cube3D implements Object3D {
 export class camera3D implements camera {
   point = {x: 400, y: 300, z: -500} // hardcoded Camera eye position
   camWidth = 800
-  camHeight = 550
+  camHeight = 500
   translation = {x: 0, y: 0, z: 0}
   rotation = {x: 0, y: 0, z: 0}
 }
