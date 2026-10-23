@@ -1,9 +1,7 @@
 import { Point2D, Point3D, Shape3D, Shape2D, scene3D, camera } from "./types";
-import { rotateObject3D } from "./transformImplementations/rotations"
-import { translateObject3D } from "./transformImplementations/translations"
-import { scaleObject3D } from "./transformImplementations/scale"
-
-// refactor later
+import { rotateObject3D } from "./transformations/rotations"
+import { translateObject3D } from "./transformations/translations"
+import { scaleObject3D } from "./transformations/scale"
 
 function transformScene3D(scene: scene3D): Shape3D[] {
   const newShapes: Shape3D[] = []
@@ -69,9 +67,8 @@ function drawShape2D(ctx: CanvasRenderingContext2D, shape2d: Shape2D[], scene3D:
       const p1z = transformedShapes[j].points[p1Idx].z
       const p2z = transformedShapes[j].points[p1Idx].z
 
-
-      console.log(p2z)
-      if (pointIsNotInView(scene3D.eye, p1) && pointIsNotInView(scene3D.eye, p2) && p1z <= scene3D.eye.point.z || p2z <= scene3D.eye.point.z) {
+      if (pointIsNotInView(scene3D.eye, p1) && pointIsNotInView(scene3D.eye, p2)
+         && p1z <= scene3D.eye.point.z || p2z <= scene3D.eye.point.z) {
         continue
       }
 
@@ -149,8 +146,8 @@ function drawLineSelectedSegment(ctx: CanvasRenderingContext2D, p1: Point2D, p2:
 }
 
 function pointIsNotInView(eye: camera, point: Point2D): boolean {
-  return point.y > eye.point.y + ((eye.camHeight) / 2) || 
-    point.y < eye.point.y - ((eye.camHeight) / 2) ||
-    point.x > eye.point.x + ((eye.camWidth) / 2) ||
-    point.x < eye.point.x - ((eye.camWidth) / 2)
+  return point.y > eye.point.y + ((eye.camHeight - 10) / 2) || 
+    point.y < eye.point.y - ((eye.camHeight - 10) / 2) ||
+    point.x > eye.point.x + ((eye.camWidth - 10) / 2) ||
+    point.x < eye.point.x - ((eye.camWidth - 10) / 2)
 }

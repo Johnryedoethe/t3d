@@ -18,7 +18,7 @@ export function setUpAllListeners() {
 
 function editorKeyBindsListener() {
   if (Scene3D.editor.selectedObjsMap.length !== 0) {
-    editorContent.textContent = "transform an object"
+    editorContent.textContent = "{g, r, s} to transform an object"
   } else {
     editorContent.textContent = "select an object"
   }
@@ -34,7 +34,7 @@ function editorKeyBindsListener() {
       Scene3D.editor.curEditorState = "idle"
       mouseEdit = false
       Scene3D.editor.curAxis = null
-      editorContent.textContent = "transform an object"
+      editorContent.textContent = "{g, r, s} to transform an object"
       return
     }
 
@@ -60,7 +60,7 @@ function editorKeyBindsListener() {
       Scene3D.editor.curAxis = null
       mouseEdit = false
       Scene3D.editor.curAxis = null
-      editorContent.textContent = "transform an object"
+      editorContent.textContent = "{g, r, s} to transform an object"
       return
     }
 
@@ -68,7 +68,7 @@ function editorKeyBindsListener() {
       Scene3D.editor.curAxis = "x"
       mouseEdit = true
       firstMouseMovement = true
-      editorContent.textContent = "x: "
+      editorContent.textContent = "x axis"
       return
     }
 
@@ -76,7 +76,7 @@ function editorKeyBindsListener() {
       Scene3D.editor.curAxis = "y"
       mouseEdit = true
       firstMouseMovement = true
-      editorContent.textContent = "y: "
+      editorContent.textContent = "y axis"
       return
     }
 
@@ -84,13 +84,13 @@ function editorKeyBindsListener() {
       Scene3D.editor.curAxis = "z"
       mouseEdit = true
       firstMouseMovement = true
-      editorContent.textContent = "z: "
+      editorContent.textContent = "z axis"
       return
     }
 
 
     if (!Scene3D.editor.curAxis) {
-      editorContent.textContent = "please select an axis of transformation"
+      editorContent.textContent = "{x, y, z} to select an axis"
       return
     }   
   })
@@ -220,6 +220,7 @@ function editActiveObjectsListener() {
 function clickOnObjListListener() {
   objList?.addEventListener('click', (event: MouseEvent) => {
     // if (Scene3D.editor.curEditorState !== "idle") {
+    //   editorContent.textContent = "q to quit transforming"
     //   return
     // }
 
